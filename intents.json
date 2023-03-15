@@ -1,0 +1,30 @@
+{"intents": [
+    {"tag": "greetings",
+    "patterns": ["hello", "hi", "hey", "how's it going", "what's up", "greetings", "good day", "good morning", "good evening", "yo", "howdy"],
+    "responses": ["Hello!", "Hey!", "Hi!", "Hi there!"]
+    },
+
+    {"tag": "goodbye",
+    "patterns": ["goodbye", "see you later", "cya", "bye", "see ya", "have a nice day", "I am leaving"],
+    "responses": ["Goodbye!", "See you soon!", "See you next time!", "See ya!"]
+    },
+
+    {"tag": "new_stock",
+    "patterns": ["I would like to add a new", "new stock", "new asset", "new etf", "please add a new", "put in", "append", "include", "add", "include this stock"],
+    "responses": ["Sure!"]
+    },
+
+    {"tag": "stock_info",
+    "patterns": ["show me information about", "info about", "stock history", "stock data", "past", "please show me data about a stock", "tell me the current price of", "what was the last"],
+    "responses": ["Of course!"]
+    },
+
+    {"tag": "predict_stock",
+    "patterns": ["show me the forecast of", "what will the opening price be tomorrow", "future", "what will the closing price be", "will tomorrow be good", "forecast", "predict", "should I sell", "should I buy", "tomorrow", "next week", "next month", "where will my stock be at"],
+    "responses": ["Ok!"]
+    },
+
+    {"tag": "rundown",
+    "patterns": ["give me my daily rundown", "show me my rundown", "what are my stocks like today", "today", "daily", "show me my portfolio", "portfolio", "what stocks am I holding", "are my stocks doing well today", "what am I investing in"],
+    "responses": ["Let me show you:"]}
+]}
