@@ -29,12 +29,11 @@ def send_stock(stock):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         try:
             s.connect((HOST, PORT))
-            stock_pickle = pickle.dumps(stock)
-            s.send(stock_pickle) #Message sent as a pickle object
-            data_pickle = s.recv(1024)
-            data = pickle.loads(data_pickle)
-            #print("Received:", str(data.decode()))
-            s.close()
+            stock_pickle = pickle.dumps(stock) #Convert list into pickle object (easy to send via socket)
+            s.send(stock_pickle)
+            data_pickle = s.recv(1024) #Recieve data from server
+            data = pickle.loads(data_pickle) #'unpickle' data into a list
+            s.close() #close connection
             return data
         except ConnectionRefusedError:
             print("Connection refused. Server not running?")
@@ -68,6 +67,9 @@ def plot_prediction(ticker, predictions):
     plt.show()
 
 def main():
+
+    ###### MACHINE LEARNING ALGORITHM ######
+
     #Load data from .json file
     intents = json.loads(open("intents.json").read())
 
@@ -119,28 +121,48 @@ def main():
     print("Chatbot is loading...\n")
     hist = model.fit(xtrain, ytrain, epochs=400, verbose = 0)
 
+
+
+    ###### USER INTERFACE/SERVER COMMUNICATION ######
+
     continue_loop = True
     while continue_loop:
         try:
             user_input = str(input("How can I help you?\n"))
         except TypeError:
             print("Invalid input, please try again.\n")
+
+        ###Convert user input to same format as training data ###
+        #Convert to lower case
         pred_words = []
-        pred_input = [letters.lower() for letters in user_input if letters not in string.punctuation]
+        pred_input = [letters.lower() for letters in user_input if letters not in string.punctuation] 
         pred_input = ''.join(pred_input)
         pred_words.append(pred_input)
 
+        #Tokenize the words
         pred_input = tokenizer.texts_to_sequences(pred_words)
         pred_input = np.array(pred_input).reshape(-1)
         pred_input = pad_sequences([pred_input], input_size)
 
+        
+        #use the model to find most likely tag
         output = model.predict(pred_input, verbose = 0)
         output = output.argmax()
-
         tag = encoder.inverse_transform([output])[0]
+
+        #Print a random response stored in the .json file (only used for greetings and goodbyes)
         print(random.choice(responses[tag]))
 
+
+        ### ACTIONS FOR EACH TAG ###
+        """""""""""""""
+        The client will send the relevant data, followed by a number (1-8) to the server in the form of a list. The number at the end of the list
+        determins the function that the server will use.
+        """""""""""""""
+
         stockList = []
+
+        #Find the price of a stock at a given day
         if tag == "get_price":
             stock = input("Which stock would you like to select? ")
             days = input("How many days ahead should I predict? ")
@@ -150,6 +172,8 @@ def main():
             data_rec = send_stock(stockList)
             print(f"The closing price of {stock} is ${data_rec}\n")
 
+        
+        #Find the daily returns of a stock/portfolio until a given day
         elif tag == "get_daily_return":
             valid = False
             num = 1
@@ -163,15 +187,18 @@ def main():
             days = input("How many days ahead should I predict? ")
             stockList.append(days)
             data_rec = []
+            #Check if user wants to predict a single stock or multiple, and select the relevent choice
             if len(stockList) == 2: #Checks that the list only contains one stock (and the number of days to predict)
                 stockList.append('2')
                 data_rec = send_stock(stockList)
-            else:
-                stockList.append('6')
+            else: #List contains more than one stock and no. of days, so must contain multiple stocks
+                stockList.append('6') 
                 data_rec = send_stock(stockList)
             
             print(f"The daily returns for your chosen stocks are:\n{data_rec} ")
 
+
+        #Find the average return of a stock over a number of days
         elif tag == "get_avg_return":
             stock = input("Which stock would you like to select? ")
             days = input("How many days ahead should I predict? ")
@@ -181,6 +208,8 @@ def main():
             data_rec = send_stock(stockList)
             print(f"The average return of {stock} over {days} days is ${data_rec}\n")
 
+            
+        #Find the volatility of a stock over a number of days
         elif tag == "get_std":
             stock = input("Which stock would you like to select? ")
             days = input("How many days ahead should I predict? ")
@@ -190,6 +219,8 @@ def main():
             data_rec = send_stock(stockList)
             print(f"The volatility of {stock} over {days} days is {data_rec}\n")
 
+
+        #Find the sharpe ratio of a stock at a given rfr over a number of days
         elif tag == "get_sharpe":
             stock = input("Which stock would you like to select? ")
             days = input("How many days ahead should I predict? ")
@@ -201,7 +232,10 @@ def main():
             data_rec = send_stock(stockList)
             print(f"The sharpe ratio of {stock} over {days} days is {data_rec}\n")
 
+
+        #Optimise a portfolio of stocks (find the optimal ratio to split the investment) to minimise variance or maximise sharp ratio (chosen by user)
         elif tag == "optimise":
+            #Stock selection
             valid = False
             num = 1
             while valid == False:
@@ -211,8 +245,10 @@ def main():
                 else:
                     stockList.append(stock)
                     num += 1
+            
             days = input("How many days ahead should I predict? ")
             
+            #Optimisation type selection
             valid = False
             while valid == False:
                 try:
@@ -223,6 +259,8 @@ def main():
                     valid = True
                 else:
                     print(f"{optimise_type} is not a valid input, please enter 1 or 2 accordingly.\n")
+
+            #Minimum variance optimisation actions
             if optimise_type == 1:
                 stockList.append(days)
                 stockList.append('7')
@@ -231,6 +269,8 @@ def main():
 
                 print(f"Here are the optimised weights: {data_rec}")
                 print(f"This produces a variance of {min_var}")
+
+            #Maximum sharpe ratio actions
             else:
                 rfr = input("What risk free rate would you like to use? (between 0 and 1): ")
                 stockList.append(rfr)
@@ -242,10 +282,7 @@ def main():
                 print(f"Here are the optimised weights: {data_rec}")
                 print(f"This produces a sharpe ratio of {max_sharpe}")
 
-            
-
-
-
+        #Stop the program is the user says goodbye
         elif tag == "goodbye":
             quit()
 
