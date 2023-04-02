@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import pickle
 import tensorflow as tf
+import yfinance as yf
 from sklearn.preprocessing import LabelEncoder
 from keras_preprocessing.text import Tokenizer
 from keras_preprocessing.sequence import pad_sequences
@@ -17,7 +18,19 @@ import os
 from config import figures_dir, dataset_dir
 
 HOST = "127.0.0.1"
-PORT = 65432
+PORT = 65433
+
+def isTicker(t: str) -> bool: #Finction to check if ticker/stock name exists on yahoo finance
+    ticker = yf.Ticker(t)
+    info = ticker.history(period='7d', interval='1d')
+    return len(info) > 0
+
+def isfloat(num): #Function to return true if string is a float
+    try:
+        float(num)
+        return True
+    except ValueError:
+        return False
 
 def get_dir(ticker):
     stock_csv = ticker + "_data.csv"
@@ -39,32 +52,6 @@ def send_stock(stock):
             print("Connection refused. Server not running?")
 
 
-def continue_loop_from_keyboard():
-    answer_valid = False
-    while not answer_valid:
-        try:
-            ans = input("Do you want to continue? (y/n): ")
-        except KeyboardInterrupt:
-            print("\nBye")
-            return False
-        if ans == "y":
-            return True
-        elif ans == "n":
-            return False
-        else:
-            print("Invalid answer. Enter 'y' or 'n'.")
-
-def plot_prediction(ticker, predictions):
-    stock_dir = get_dir(ticker)
-    dataset = pd.read_csv(stock_dir, index_col=0)
-    plt.plot(dataset.tail(60).index, dataset.tail(60)['Close'], color = 'red', label = f'Historical {ticker} Price')
-    plt.plot(predictions.index, predictions['Close'], color = 'blue', label = f'Predicted {ticker} Price')
-    plt.title(f'{ticker} Stock Price Prediction')
-    plt.xlabel('Time')
-    plt.ylabel(f'{ticker} Stock Price')
-    plt.legend()
-    plt.savefig(os.path.join(figures_dir, ticker + "_prediction.png"))
-    plt.show()
 
 def main():
 
@@ -118,7 +105,7 @@ def main():
     model.compile(loss = "sparse_categorical_crossentropy", optimizer = "adam", metrics = ["accuracy"])
 
     #train the model
-    print("Chatbot is loading...\n")
+    print("\nChatbot is loading...\n")
     hist = model.fit(xtrain, ytrain, epochs=400, verbose = 0)
 
 
@@ -164,13 +151,20 @@ def main():
 
         #Find the price of a stock at a given day
         if tag == "get_price":
-            stock = input("Which stock would you like to select? ")
-            days = input("How many days ahead should I predict? ")
+            valid = False
+            while valid == False:
+                stock = input("Which stock would you like to select? ")
+                days = input("How many days ahead should I predict? ")
+                if(isTicker(stock) and days.isdigit()):
+                    valid = True
+                else:
+                    print("Invalid input. Please try again.\n")
+
             stockList.append(stock)
             stockList.append(days)
             stockList.append('1')
-            data_rec = send_stock(stockList)
-            print(f"The closing price of {stock} is ${data_rec}\n")
+            data_rec = round(send_stock(stockList), 2)
+            print(f"The closing price of {stock} {days} days from now will be ${data_rec}\n")
 
         
         #Find the daily returns of a stock/portfolio until a given day
@@ -181,56 +175,88 @@ def main():
                 stock = input(f"Please enter stock {num} (or type 'Done' to finish): ")
                 if stock.lower() == "done":
                     valid = True
+                elif not isTicker(stock):
+                    print("Invalid input. Please try again.\n")
                 else:
                     stockList.append(stock)
                     num += 1
-            days = input("How many days ahead should I predict? ")
+            valid = False
+            while valid == False:
+                days = input("How many days ahead should I predict? ")
+                if days.isdigit():
+                    valid = True
+                else:
+                    print("Invalid input. Please try again.\n")
             stockList.append(days)
             data_rec = []
             #Check if user wants to predict a single stock or multiple, and select the relevent choice
             if len(stockList) == 2: #Checks that the list only contains one stock (and the number of days to predict)
                 stockList.append('2')
                 data_rec = send_stock(stockList)
+                data_round = [round(price, 2) for price in data_rec]
+                print(f"The daily returns of {stockList[0]} over {days} days will be: {data_round}\n")
             else: #List contains more than one stock and no. of days, so must contain multiple stocks
                 stockList.append('6') 
-                data_rec = send_stock(stockList)
+                data_rec = np.round(send_stock(stockList), 2)
+                print(f"The daily returns for your chosen stocks over {days} days will be:")
+                for i in range (len(stockList)-2):
+                    print(f"{stockList[i]}: {np.transpose(data_rec[:,i])}\n")
             
-            print(f"The daily returns for your chosen stocks are:\n{data_rec} ")
 
 
         #Find the average return of a stock over a number of days
         elif tag == "get_avg_return":
-            stock = input("Which stock would you like to select? ")
-            days = input("How many days ahead should I predict? ")
+            valid = False
+            while valid == False:
+                stock = input("Which stock would you like to select? ")
+                days = input("How many days ahead should I predict? ")
+                if(isTicker(stock) and days.isdigit()):
+                    valid = True
+                else:
+                    print("Invalid input. Please try again.\n")
             stockList.append(stock)
             stockList.append(days)
             stockList.append('3')
-            data_rec = send_stock(stockList)
-            print(f"The average return of {stock} over {days} days is ${data_rec}\n")
+            data_rec = round(send_stock(stockList), 2)
+            print(f"The average return of {stock} over {days} days will be ${data_rec}\n")
+            
 
             
         #Find the volatility of a stock over a number of days
         elif tag == "get_std":
-            stock = input("Which stock would you like to select? ")
-            days = input("How many days ahead should I predict? ")
+            valid = False
+            while valid == False:
+                stock = input("Which stock would you like to select? ")
+                days = input("How many days ahead should I predict? ")
+                if(isTicker(stock) and days.isdigit()):
+                    valid = True
+                else:
+                    print("Invalid input. Please try again.\n")
             stockList.append(stock)
             stockList.append(days)
             stockList.append('4')
-            data_rec = send_stock(stockList)
-            print(f"The volatility of {stock} over {days} days is {data_rec}\n")
+            data_rec = round(send_stock(stockList), 2)
+            print(f"The volatility of {stock} over {days} days will be {data_rec}\n")
 
 
         #Find the sharpe ratio of a stock at a given rfr over a number of days
         elif tag == "get_sharpe":
-            stock = input("Which stock would you like to select? ")
-            days = input("How many days ahead should I predict? ")
-            rfr = input("What risk free rate would you like to use? (between 0 and 1): ")
+            valid = False
+            while valid == False:
+                stock = input("Which stock would you like to select? ")
+                days = input("How many days ahead should I predict? ")
+                rfr = input("What risk free rate would you like to use? ")
+                if(isTicker(stock) and days.isdigit() and isfloat(rfr)):
+                    valid = True
+                else:
+                    print("Invalid input. Please try again.\n")
+            
             stockList.append(stock)
             stockList.append(rfr) #appended before days and choice so that the server can process the data correctly
             stockList.append(days)
             stockList.append('5')
-            data_rec = send_stock(stockList)
-            print(f"The sharpe ratio of {stock} over {days} days is {data_rec}\n")
+            data_rec = round(send_stock(stockList), 2)
+            print(f"The sharpe ratio of {stock} over {days} days will be {data_rec}\n")
 
 
         #Optimise a portfolio of stocks (find the optimal ratio to split the investment) to minimise variance or maximise sharp ratio (chosen by user)
@@ -242,11 +268,19 @@ def main():
                 stock = input(f"Please enter stock {num} (or type 'Done' to finish): ")
                 if stock.lower() == "done":
                     valid = True
+                elif not isTicker(stock):
+                    print("Invalid input. Please try again.\n")
                 else:
                     stockList.append(stock)
                     num += 1
             
-            days = input("How many days ahead should I predict? ")
+            valid = False
+            while valid == False:
+                days = input("How many days ahead should I predict? ")
+                if days.isdigit():
+                    valid = True
+                else:
+                    print("Invalid input. Please try again.\n")
             
             #Optimisation type selection
             valid = False
@@ -267,19 +301,32 @@ def main():
                 data_rec = send_stock(stockList)
                 min_var = data_rec.pop()
 
-                print(f"Here are the optimised weights: {data_rec}")
+                print(f"The optimal ratio to split your investment is as follows:")
+
+                for i in range (len(stockList)-2):
+                    print(f"{stockList[i]}: {round(data_rec[i]*100, 2)}%")
                 print(f"This produces a variance of {min_var}")
 
             #Maximum sharpe ratio actions
             else:
-                rfr = input("What risk free rate would you like to use? (between 0 and 1): ")
+                valid = False
+                while valid == False:
+                    rfr = input("What risk free rate would you like to use?: ")
+                    if isfloat(rfr):
+                        valid = True
+                    else:
+                        print("Invalid input. Please try again.\n")
+                
                 stockList.append(rfr)
                 stockList.append(days)
                 stockList.append('8')
                 data_rec = send_stock(stockList)
                 max_sharpe = data_rec.pop()
 
-                print(f"Here are the optimised weights: {data_rec}")
+                print(f"The optimal ratio to split your investment is as follows:")
+
+                for i in range (len(stockList)-3):
+                    print(f"{stockList[i]}: {round(data_rec[i]*100, 2)}%")
                 print(f"This produces a sharpe ratio of {max_sharpe}")
 
         #Stop the program is the user says goodbye
