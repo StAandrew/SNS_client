@@ -48,7 +48,7 @@ def process_stock_data(stock):
     """
     print("Processing stock data...")
     # remove unnecessary columns
-    stock = stock.drop(["Stock Splits"], axis=1)
+    # stock = stock.drop(["Stock Splits"], axis=1)
     # add daily return column
     stock["Daily Return"] = stock["Close"].pct_change()
     # multiply daily return by 100 to get percentage
