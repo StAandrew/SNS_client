@@ -14,8 +14,10 @@ from keras_preprocessing.sequence import pad_sequences
 from keras.layers import Embedding, LSTM, Dense, Flatten, SpatialDropout1D
 from keras.models import Sequential
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import os
 from config import figures_dir, dataset_dir
+
 
 HOST = "127.0.0.1"
 PORT = 65433
@@ -50,7 +52,6 @@ def send_stock(stock):
             return data
         except ConnectionRefusedError:
             print("Connection refused. Server not running?")
-
 
 
 def main():
