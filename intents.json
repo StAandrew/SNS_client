@@ -15,27 +15,32 @@
     },
 
     {"tag": "get_daily_return",
-    "patterns": ["daily returns", "daily profit", "profit of", "returns of", "Tell me the returns", "How much money will I make each day", "Profit in days", "return in days", "each day", "find the daily returns of my portfolio", "find the profit of a stock", "find the returns of my stock"],
+    "patterns": ["daily returns", "daily profit", "profit of", "returns of", "Tell me the returns", "How much money will I make each day", "Profit in days", "return in days", "each day", "find the daily returns of my portfolio", "find the profit of a stock", "find the returns of my stock", "predict daily returns"],
     "responses": ["Tag: get_daily_return"]
     },
 
     {"tag": "get_avg_return",
-    "patterns": ["what are my average returns", "average returns", "total", "total profit", "overall returns", "overall profit", "what is the total profit", "how much money will I make in total", "net profit", "net returns", "find the average returns of my stock"],
+    "patterns": ["what are my average returns", "average returns", "total", "total profit", "overall returns", "overall profit", "what is the total profit", "how much money will I make in total", "net profit", "net returns", "find the average returns of my stock", "predict average returns"],
     "responses": ["Tag: get_avg_return"]
     },
 
     {"tag": "get_std",
-    "patterns": ["find the volatility of a stock", "what is the volatility", "volatility", "what is the standard deviation", "std", "sigma", "find the volatility", "find the standard deviation", "how volatile is"],
+    "patterns": ["find the volatility of a stock", "what is the volatility", "volatility", "what is the standard deviation", "std", "sigma", "find the volatility", "find the standard deviation", "how volatile is", "predict volatility", "predict standard deviation"],
     "responses": ["Tag: get_std"]
     },
 
     {"tag": "get_sharpe",
-    "patterns": ["find the sharpe ratio of a stock", "what is the sharpe ratio", "sharpe", "ratio", "sharpe ratio", "asses the performance of a stock", "performance", "find the sharpe ratio"],
+    "patterns": ["find the sharpe ratio of a stock", "what is the sharpe ratio", "sharpe", "ratio", "sharpe ratio", "asses the performance of a stock", "performance", "find the sharpe ratio", "predict sharpe ratio"],
     "responses": ["Tag: get_sharpe"]
     },
 
     {"tag": "optimise",
     "patterns": ["optimise my portfolio", "optimise my stocks", "optimise", "find the best", "What's the best way to buy these stocks", "How can I minimise the variance", "How can I maximise the sharpe ratio", "Optimise my portfolio for minimum variance", "Optimise my stocks for maximum sharpe ratio"],
     "responses": ["Tag: optimise"]
+    },
+
+    {"tag": "help",
+    "patterns": ["help", "help me", "what features do you have", "what can you do", "what functions", "what are you"],
+    "responses": ["Tag: help"]
     }
 ]}

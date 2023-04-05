@@ -134,11 +134,17 @@ def main():
         
         #use the model to find most likely tag
         output = model.predict(pred_input, verbose = 0)
-        output = output.argmax()
-        tag = encoder.inverse_transform([output])[0]
+        print(output)
+        if np.max(output) >= 0.60:  #Checks that the network is confident in its answer
+            output = output.argmax()
+            print(output)
+            tag = encoder.inverse_transform([output])[0]
+            #Print a random response stored in the .json file (only used for greetings and goodbyes)
+            print(random.choice(responses[tag]))
+        else:
+            tag = "no_tag"
 
-        #Print a random response stored in the .json file (only used for greetings and goodbyes)
-        print(random.choice(responses[tag]))
+        
 
 
         ### ACTIONS FOR EACH TAG ###
@@ -173,13 +179,14 @@ def main():
             num = 1
             while valid == False:
                 stock = input(f"Please enter stock {num} (or type 'Done' to finish): ")
-                if stock.lower() == "done":
+                if stock.lower() == "done" and len(stockList) > 0:
                     valid = True
-                elif not isTicker(stock):
-                    print("Invalid input. Please try again.\n")
-                else:
+                elif isTicker(stock):
                     stockList.append(stock)
                     num += 1
+                else:
+                    print("Invalid input. Please try again.\n")
+                    
             valid = False
             while valid == False:
                 days = input("How many days ahead should I predict? ")
@@ -266,13 +273,13 @@ def main():
             num = 1
             while valid == False:
                 stock = input(f"Please enter stock {num} (or type 'Done' to finish): ")
-                if stock.lower() == "done":
+                if stock.lower() == "done" and len(stockList) > 0:
                     valid = True
-                elif not isTicker(stock):
-                    print("Invalid input. Please try again.\n")
-                else:
+                elif isTicker(stock):
                     stockList.append(stock)
                     num += 1
+                else:
+                    print("Invalid input. Please try again.\n")
             
             valid = False
             while valid == False:
@@ -332,6 +339,18 @@ def main():
         #Stop the program is the user says goodbye
         elif tag == "goodbye":
             quit()
+
+        elif tag == "no_tag":
+            print("I'm not sure how to help you with that. Please try asking me something different, or type 'help' to see a list of things that I can do.\n")
+
+        elif tag == "help":
+            print("I am a chatbot that can predict a number of different things to do with stocks. Here is a list of things I can help you with:")
+            print(" 1. Predict the closing price of a stock")
+            print(" 2. Predict the daily returns of a stock/portfolio")
+            print(" 3. Predict the average returns of a stock")
+            print(" 4. Predict the volatility of a stock")
+            print(" 5. Predict the sharpe ratio of a stock")
+            print(" 6. Optimise a portfolio for either minimum variance or maximum sharpe ratio\n")
 
 
 if __name__ == "__main__":
