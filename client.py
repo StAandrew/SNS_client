@@ -134,10 +134,10 @@ def main():
         
         #use the model to find most likely tag
         output = model.predict(pred_input, verbose = 0)
-        print(output)
-        if np.max(output) >= 0.60:  #Checks that the network is confident in its answer
+        #print(output)
+        if np.max(output) >= 0.50:  #Checks that the network is confident in its answer
             output = output.argmax()
-            print(output)
+            #print(output)
             tag = encoder.inverse_transform([output])[0]
             #Print a random response stored in the .json file (only used for greetings and goodbyes)
             print(random.choice(responses[tag]))
