@@ -17,7 +17,7 @@ def get_historical_data(ticker):
             A DataFrame containing the historical stock data.
 
     """
-    print("Fetching historical data...")
+    #print("Fetching historical data...")
     # create a Ticker object
     stock = yf.Ticker(ticker)
 
@@ -46,7 +46,7 @@ def process_stock_data(stock):
         apple_data = pd.read_csv('apple_stock_data.csv')
         processed_apple_data = process_apple_stock(apple_data)
     """
-    print("Processing stock data...")
+    #print("Processing stock data...")
     # remove unnecessary columns
     # stock = stock.drop(["Stock Splits"], axis=1)
     # add daily return column

@@ -16,6 +16,7 @@ from keras.models import Sequential
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import os
+import plots
 from config import figures_dir, dataset_dir
 
 
@@ -46,10 +47,9 @@ def send_stock(stock):
             s.connect((HOST, PORT))
             stock_pickle = pickle.dumps(stock) #Convert list into pickle object (easy to send via socket)
             s.send(stock_pickle)
-            data_pickle = s.recv(1024) #Recieve data from server
-            data = pickle.loads(data_pickle) #'unpickle' data into a list
-            s.close() #close connection
-            return data
+            results_pickle = s.recv(4096) #Recieve results from server
+            results = pickle.loads(results_pickle) #'unpickle' data into a list
+            return results
         except ConnectionRefusedError:
             print("Connection refused. Server not running?")
 
@@ -170,8 +170,13 @@ def main():
             stockList.append(stock)
             stockList.append(days)
             stockList.append('1')
-            data_rec = round(send_stock(stockList), 2)
-            print(f"The closing price of {stock} {days} days from now will be ${data_rec}\n")
+            predictions = send_stock(stockList)
+            pred_close = predictions['Close'].tolist()
+            price = round(pred_close[int(days)-1], 2)
+            print(f"The closing price of {stock} {days} days from now will be ${price}\n")
+            print("Here is a graph of my predictions, a copy has been saved in the 'Plots' folder. Please close the plot window to continue.")
+            plots.plot_prediction(stock, predictions)
+
 
         
         #Find the daily returns of a stock/portfolio until a given day
@@ -201,14 +206,20 @@ def main():
             if len(stockList) == 2: #Checks that the list only contains one stock (and the number of days to predict)
                 stockList.append('2')
                 data_rec = send_stock(stockList)
-                data_round = [round(price, 2) for price in data_rec]
+                data_round = np.round(data_rec, 2)
                 print(f"The daily returns of {stockList[0]} over {days} days will be: {data_round}\n")
+                print("Here is a graph of my predictions, a copy has been saved in the 'Plots' folder. Please close the plot window to continue.")
+                plots.plot_daily_returns(stockList[0], data_rec)
             else: #List contains more than one stock and no. of days, so must contain multiple stocks
                 stockList.append('6') 
-                data_rec = np.round(send_stock(stockList), 2)
+                data_rec = send_stock(stockList)
+                data_round = data_rec.round(2)
                 print(f"The daily returns for your chosen stocks over {days} days will be:")
-                for i in range (len(stockList)-2):
-                    print(f"{stockList[i]}: {np.transpose(data_rec[:,i])}\n")
+                print(data_round)
+                print("Here is a graph of my predictions, a copy has been saved in the 'Plots' folder. Please close the plot window to continue.")
+                plots.plot_daily_portfolio_returns(stockList[0:len(stockList)-2], data_rec)
+            
+            
             
 
 
@@ -226,8 +237,7 @@ def main():
             stockList.append(days)
             stockList.append('3')
             data_rec = round(send_stock(stockList), 2)
-            print(f"The average return of {stock} over {days} days will be ${data_rec}\n")
-            
+            print(f"The average return of {stock} over {days} days will be ${data_rec}\n")            
 
             
         #Find the volatility of a stock over a number of days
@@ -314,6 +324,8 @@ def main():
                 for i in range (len(stockList)-2):
                     print(f"{stockList[i]}: {round(data_rec[i]*100, 2)}%")
                 print(f"This produces a variance of {min_var}")
+                print("Here is a chart of my predictions, a copy has been saved in the 'Plots' folder. Please close the plot window to continue.")
+                plots.plot_opt_portfolio(stockList[0:len(stockList)-2], data_rec[0:len(stockList)-2], 'var')
 
             #Maximum sharpe ratio actions
             else:
@@ -336,6 +348,9 @@ def main():
                 for i in range (len(stockList)-3):
                     print(f"{stockList[i]}: {round(data_rec[i]*100, 2)}%")
                 print(f"This produces a sharpe ratio of {max_sharpe}")
+                print("Here is a chart of my predictions, a copy has been saved in the 'Plots' folder. Please close the plot window to continue.")
+                plots.plot_opt_portfolio(stockList[0:len(stockList)-3], data_rec[0:len(stockList)-3], 'sharpe')
+
 
         #Stop the program is the user says goodbye
         elif tag == "goodbye":

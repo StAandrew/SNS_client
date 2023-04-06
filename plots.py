@@ -37,6 +37,7 @@ def plot_prediction(ticker, predictions):
     # Rotate the x-axis labels for better readability
     plt.setp(ax.xaxis.get_majorticklabels(), ha='right')
     plt.savefig("Plots/test_prediction.png")
+    plt.show()
     
     ax.legend()
 
@@ -66,6 +67,7 @@ def plot_daily_returns(ticker, predictions):
     # Rotate the x-axis labels for better readability
     plt.setp(ax.xaxis.get_majorticklabels(), ha='right')
     plt.savefig("Plots/test_daily_ret.png")
+    plt.show()
     
     ax.legend()
 
@@ -98,7 +100,7 @@ def plot_daily_portfolio_returns(ticker_list, combined_returns):
     # Rotate the x-axis labels for better readability
     plt.setp(ax.xaxis.get_majorticklabels(), ha='right')
     plt.savefig("Plots/test_daily_port_ret.png")
-    
+    plt.show()
     ax.legend()
 
 def plot_cumulative_portfolio_returns(ticker_list, combined_returns):
@@ -131,7 +133,7 @@ def plot_cumulative_portfolio_returns(ticker_list, combined_returns):
     # Rotate the x-axis labels for better readability
     plt.setp(ax.xaxis.get_majorticklabels(), ha='right')
     plt.savefig("Plots/test_cum_port_ret.png")
-    
+    plt.show()
     ax.legend()
 
 def plot_opt_portfolio(ticker_list, weights, type):
@@ -150,3 +152,5 @@ def plot_opt_portfolio(ticker_list, weights, type):
     elif type == 'sharpe':
         ax.set_title(f'Maximum Sharpe Portfolio')
         plt.savefig("Plots/test_max_sharpe.png")
+    
+    plt.show()
