@@ -6,6 +6,12 @@ from data_acquisition import get_historical_data, process_stock_data
 
 
 def plot_prediction(ticker, predictions):
+    """
+    Inputs:
+        ticker: ticker of the stock.
+        prediction: df from get_prediction()
+    """
+
     dataset = get_historical_data(ticker)
     dataset = process_stock_data(dataset)
     dataset.set_index("Date", inplace=True)
@@ -35,6 +41,11 @@ def plot_prediction(ticker, predictions):
     ax.legend()
 
 def plot_daily_returns(ticker, predictions):
+    """
+    Inputs:
+        ticker: ticker of the stock.
+        prediction: df from get_daily_returns()
+    """
     
     # Convert the index to datetime objects
     predictions.index = pd.to_datetime(predictions.index)
@@ -58,7 +69,12 @@ def plot_daily_returns(ticker, predictions):
     
     ax.legend()
 
-def plot_daily_portfolio_returns(ticker_list, combined_returns):    # feed combined returns df
+def plot_daily_portfolio_returns(ticker_list, combined_returns):
+    """
+    Inputs:
+        ticker_list: list of tickers of portfolio stocks.
+        combined_returns: df from get_portfolio_returns() - second variable returned
+    """
 
     combined_returns.index = pd.to_datetime(combined_returns.index)
     total_returns = combined_returns.sum(axis=1).reset_index(name='Total')
@@ -86,6 +102,11 @@ def plot_daily_portfolio_returns(ticker_list, combined_returns):    # feed combi
     ax.legend()
 
 def plot_cumulative_portfolio_returns(ticker_list, combined_returns):
+    """
+    Inputs:
+        ticker_list: list of tickers of portfolio stocks.
+        combined_returns: df from get_portfolio_returns() - second variable returned
+    """
 
     combined_returns.index = pd.to_datetime(combined_returns.index)
     cumulative_returns = combined_returns.cumsum()
@@ -114,6 +135,12 @@ def plot_cumulative_portfolio_returns(ticker_list, combined_returns):
     ax.legend()
 
 def plot_opt_portfolio(ticker_list, weights, type):
+    """
+    Inputs:
+        ticker_list: list of tickers of portfolio stocks.
+        weights: array from min_var_portfolio() or max_sharpe_portfolio() - first thing returned
+        type: 'var' for min_var_portfolio() or 'sharpe' for max_sharpe_portfolio()
+    """
 
     fig, ax = plt.subplots()
     ax.pie(weights, labels=ticker_list, autopct='%1.1f%%')
