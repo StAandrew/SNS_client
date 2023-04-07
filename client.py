@@ -161,8 +161,8 @@ def main():
             valid = False
             while valid == False:
                 stock = input("Which stock would you like to select? ")
-                days = input("How many days ahead should I predict? ")
-                if(isTicker(stock) and days.isdigit()):
+                days = input("How many days ahead should I predict? (max 30): ")
+                if(isTicker(stock) and days.isdigit() and int(days) <= 30):
                     valid = True
                 else:
                     print("Invalid input. Please try again.\n")
@@ -196,8 +196,8 @@ def main():
                     
             valid = False
             while valid == False:
-                days = input("How many days ahead should I predict? ")
-                if days.isdigit():
+                days = input("How many days ahead should I predict? (max 30): ")
+                if days.isdigit() and int(days) <= 30:
                     valid = True
                 else:
                     print("Invalid input. Please try again.\n")
@@ -209,7 +209,8 @@ def main():
                 print("\nPredicting...\n")
                 data_rec = send_stock(stockList)
                 data_round = np.round(data_rec, 2)
-                print(f"The daily returns of {stockList[0]} over {days} days will be: {data_round}\n")
+                print(f"The daily returns of {stockList[0]} over {days} days will be: \n")
+                print(data_round)
                 print("Here is a graph of my predictions, a copy has been saved in the 'Plots' folder. Please close the plot window to continue.")
                 plots.plot_daily_returns(stockList[0], data_rec)
             else: #List contains more than one stock and no. of days, so must contain multiple stocks
@@ -228,7 +229,7 @@ def main():
                     if graph_type == 1 or graph_type == 2:
                         valid = True
                     else:
-                        print(f"{optimise_type} is not a valid input, please enter 1 or 2 accordingly.\n")
+                        print(f"{graph_type} is not a valid input, please enter 1 or 2 accordingly.\n")
                 print("Here is a graph of my predictions, a copy has been saved in the 'Plots' folder. Please close the plot window to continue.")
 
                 if graph_type == 1:
@@ -246,8 +247,8 @@ def main():
             valid = False
             while valid == False:
                 stock = input("Which stock would you like to select? ")
-                days = input("How many days ahead should I predict? ")
-                if(isTicker(stock) and days.isdigit()):
+                days = input("How many days ahead should I predict? (max 30): ")
+                if(isTicker(stock) and days.isdigit() and int(days) <= 30):
                     valid = True
                 else:
                     print("Invalid input. Please try again.\n")
@@ -264,8 +265,8 @@ def main():
             valid = False
             while valid == False:
                 stock = input("Which stock would you like to select? ")
-                days = input("How many days ahead should I predict? ")
-                if(isTicker(stock) and days.isdigit()):
+                days = input("How many days ahead should I predict? (max 30): ")
+                if(isTicker(stock) and days.isdigit() and int(days) <= 30):
                     valid = True
                 else:
                     print("Invalid input. Please try again.\n")
@@ -282,9 +283,9 @@ def main():
             valid = False
             while valid == False:
                 stock = input("Which stock would you like to select? ")
-                days = input("How many days ahead should I predict? ")
+                days = input("How many days ahead should I predict? (max 30): ")
                 rfr = input("What risk free rate would you like to use? ")
-                if(isTicker(stock) and days.isdigit() and isfloat(rfr)):
+                if(isTicker(stock) and days.isdigit() and int(days) <= 30 and isfloat(rfr)):
                     valid = True
                 else:
                     print("Invalid input. Please try again.\n")
@@ -315,8 +316,8 @@ def main():
             
             valid = False
             while valid == False:
-                days = input("How many days ahead should I predict? ")
-                if days.isdigit():
+                days = input("How many days ahead should I predict? (max 30): ")
+                if days.isdigit() and int(days) <= 30:
                     valid = True
                 else:
                     print("Invalid input. Please try again.\n")

@@ -64,7 +64,7 @@ model.compile(loss = "sparse_categorical_crossentropy", optimizer = "adam", metr
 
 #train the model
 print("\nChatbot is loading...\n")
-hist = model.fit(xtrain, ytrain, epochs=500, verbose = 0)
+hist = model.fit(xtrain, ytrain, epochs=400, verbose = 0)
 
 fig, ax1 = plt.subplots()
 
