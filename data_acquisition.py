@@ -5,7 +5,6 @@ import pandas as pd
 
 
 def get_historical_data(ticker):
-
     """
     Retrieves historical stock data from Yahoo Finance.
 
@@ -17,7 +16,7 @@ def get_historical_data(ticker):
             A DataFrame containing the historical stock data.
 
     """
-    #print("Fetching historical data...")
+    # print("Fetching historical data...")
     # create a Ticker object
     stock = yf.Ticker(ticker)
 
@@ -29,6 +28,7 @@ def get_historical_data(ticker):
 
     # return the DataFrame containing the stock data
     return stock_data
+
 
 def process_stock_data(stock):
     """
@@ -46,7 +46,7 @@ def process_stock_data(stock):
         apple_data = pd.read_csv('apple_stock_data.csv')
         processed_apple_data = process_apple_stock(apple_data)
     """
-    #print("Processing stock data...")
+    # print("Processing stock data...")
     # remove unnecessary columns
     # stock = stock.drop(["Stock Splits"], axis=1)
     # add daily return column
