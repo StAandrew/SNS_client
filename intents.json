@@ -20,22 +20,22 @@
     },
 
     {"tag": "get_avg_return",
-    "patterns": ["what are my average returns", "average returns", "total", "total profit", "overall returns", "overall profit", "what is the total profit", "how much money will I make in total", "net profit", "net returns", "find the average returns of my stock", "predict average returns"],
+    "patterns": ["what are my average returns", "average returns", "average", "find the mean", "How much money will I make on average", "find the average returns of my stock", "predict average returns", "expected returns", "expected profit"],
     "responses": ["Of course! I'll predict the average returns for you.", "Sure! I'll predict the average returns for you.", "No worries! I'll predict the average returns for you.", "Ok! I'll predict the average returns for you.", "No problem! I'll predict the average returns for you."]
     },
 
     {"tag": "get_std",
-    "patterns": ["find the volatility of a stock", "what is the volatility", "volatility", "what is the standard deviation", "std", "sigma", "find the volatility", "find the standard deviation", "how volatile is", "predict volatility", "predict standard deviation"],
+    "patterns": ["find the volatility of a stock", "what is the volatility", "volatility", "what is the standard deviation", "std", "sigma", "find the volatility", "find the standard deviation", "how volatile is", "predict volatility", "predict standard deviation", "volatile"],
     "responses": ["Of course! I'll predict the volatility for you.", "Sure! I'll predict the volatility for you.", "No worries! I'll predict the volatility for you.", "Ok! I'll predict the volatility for you.", "No problem! I'll predict the volatility for you."]
     },
 
     {"tag": "get_sharpe",
-    "patterns": ["find the sharpe ratio of a stock", "what is the sharpe ratio", "sharpe", "ratio", "sharpe ratio", "asses the performance of a stock", "performance", "find the sharpe ratio", "predict sharpe ratio"],
+    "patterns": ["find the sharpe ratio of a stock", "what is the sharpe ratio", "sharpe", "ratio", "sharpe ratio", "asses the performance of a stock", "performance", "perform", "find the sharpe ratio", "predict sharpe ratio"],
     "responses": ["Of course! I'll predict the sharpe ratio for you.", "Sure! I'll predict the sharpe ratio for you.", "No worries! I'll predict the sharpe ratio for you.", "Ok! I'll predict the sharpe ratio for you.", "No problem! I'll predict the sharpe ratio for you."]
     },
 
     {"tag": "optimise",
-    "patterns": ["optimise my portfolio", "optimise my stocks", "optimise", "find the best", "What's the best way to buy these stocks", "How can I minimise the variance", "How can I maximise the sharpe ratio", "Optimise my portfolio for minimum variance", "Optimise my stocks for maximum sharpe ratio"],
+    "patterns": ["optimise my portfolio", "optimise my stocks", "optimise", "find the best", "What's the best way to buy these stocks", "How can I minimise the variance", "How can I maximise the sharpe ratio", "Optimise my portfolio for minimum variance", "Optimise my stocks for maximum sharpe ratio", "How should I split my money", "how should I invest", "whats the best way to invest in these stocks"],
     "responses": ["Of course! I'll optimise your portfolio", "Sure! I'll optimise your portfolio", "No worries! I'll optimise your portfolio", "Ok! I'll optimise your portfolio", "No problem! I'll optimise your portfolio"]
     },
 

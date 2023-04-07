@@ -222,7 +222,7 @@ def main():
                 valid = False
                 while valid == False:
                     try:
-                        graph_type = int(input("\nWould you like to see a graph of 1. Daily returns or 2. Cumulative returns of the portfolio(Please type 1 or 2 to select option): "))
+                        graph_type = int(input("\nWould you like to see a graph of 1. Daily returns or 2. Cumulative returns of the portfolio (please type 1 or 2 to select option): "))
                     except TypeError:
                         print("Invalid input, please try again.\n")
                     if graph_type == 1 or graph_type == 2:
