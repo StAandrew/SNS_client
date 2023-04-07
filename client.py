@@ -116,7 +116,7 @@ def main():
     continue_loop = True
     while continue_loop:
         try:
-            user_input = str(input("How can I help you?\n"))
+            user_input = str(input("\nHow can I help you?\n"))
         except TypeError:
             print("Invalid input, please try again.\n")
 
@@ -170,6 +170,7 @@ def main():
             stockList.append(stock)
             stockList.append(days)
             stockList.append('1')
+            print("\nPredicting...\n")
             predictions = send_stock(stockList)
             pred_close = predictions['Close'].tolist()
             price = round(pred_close[int(days)-1], 2)
@@ -205,6 +206,7 @@ def main():
             #Check if user wants to predict a single stock or multiple, and select the relevent choice
             if len(stockList) == 2: #Checks that the list only contains one stock (and the number of days to predict)
                 stockList.append('2')
+                print("\nPredicting...\n")
                 data_rec = send_stock(stockList)
                 data_round = np.round(data_rec, 2)
                 print(f"The daily returns of {stockList[0]} over {days} days will be: {data_round}\n")
@@ -212,12 +214,28 @@ def main():
                 plots.plot_daily_returns(stockList[0], data_rec)
             else: #List contains more than one stock and no. of days, so must contain multiple stocks
                 stockList.append('6') 
+                print("\nPredicting...\n")
                 data_rec = send_stock(stockList)
                 data_round = data_rec.round(2)
-                print(f"The daily returns for your chosen stocks over {days} days will be:")
+                print(f"The daily returns for your chosen stocks over {days} days will be:\n")
                 print(data_round)
+                valid = False
+                while valid == False:
+                    try:
+                        graph_type = int(input("\nWould you like to see a graph of 1. Daily returns or 2. Cumulative returns of the portfolio(Please type 1 or 2 to select option): "))
+                    except TypeError:
+                        print("Invalid input, please try again.\n")
+                    if graph_type == 1 or graph_type == 2:
+                        valid = True
+                    else:
+                        print(f"{optimise_type} is not a valid input, please enter 1 or 2 accordingly.\n")
                 print("Here is a graph of my predictions, a copy has been saved in the 'Plots' folder. Please close the plot window to continue.")
-                plots.plot_daily_portfolio_returns(stockList[0:len(stockList)-2], data_rec)
+
+                if graph_type == 1:
+                    plots.plot_daily_portfolio_returns(stockList[0:len(stockList)-2], data_rec)
+                else:
+                    plots.plot_cumulative_portfolio_returns(stockList[0:len(stockList)-2], data_rec)
+
             
             
             
@@ -236,6 +254,7 @@ def main():
             stockList.append(stock)
             stockList.append(days)
             stockList.append('3')
+            print("\nPredicting...\n")
             data_rec = round(send_stock(stockList), 2)
             print(f"The average return of {stock} over {days} days will be ${data_rec}\n")            
 
@@ -253,6 +272,7 @@ def main():
             stockList.append(stock)
             stockList.append(days)
             stockList.append('4')
+            print("\nPredicting...\n")
             data_rec = round(send_stock(stockList), 2)
             print(f"The volatility of {stock} over {days} days will be {data_rec}\n")
 
@@ -273,6 +293,7 @@ def main():
             stockList.append(rfr) #appended before days and choice so that the server can process the data correctly
             stockList.append(days)
             stockList.append('5')
+            print("\nPredicting...\n")
             data_rec = round(send_stock(stockList), 2)
             print(f"The sharpe ratio of {stock} over {days} days will be {data_rec}\n")
 
@@ -316,6 +337,7 @@ def main():
             if optimise_type == 1:
                 stockList.append(days)
                 stockList.append('7')
+                print("\nPredicting...\n")
                 data_rec = send_stock(stockList)
                 min_var = data_rec.pop()
 
@@ -340,6 +362,7 @@ def main():
                 stockList.append(rfr)
                 stockList.append(days)
                 stockList.append('8')
+                print("\nPredicting...\n")
                 data_rec = send_stock(stockList)
                 max_sharpe = data_rec.pop()
 

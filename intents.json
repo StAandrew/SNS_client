@@ -41,6 +41,6 @@
 
     {"tag": "help",
     "patterns": ["help", "help me", "what features do you have", "what can you do", "what functions", "what are you"],
-    "responses": []
+    "responses": [""]
     }
 ]}
